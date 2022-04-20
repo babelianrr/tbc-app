@@ -118,7 +118,7 @@ class Auth extends CI_Controller
 
       $this->session->set_flashdata('message', '
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Successfully registering an account. Please check your email to activate the account.
+        Successfully registering an account. Please check your email (main inbox or spam) to activate the account.
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
         </button>
       </div>');
@@ -154,36 +154,37 @@ class Auth extends CI_Controller
 
   private function _sendEmail($token, $type)
   {
-    $config = [
-      'protocol'  => 'smtp',
-      'smtp_host' => 'ssl://smtp.googlemail.com',
-      'smtp_user' => '', // your gmail address
-      'smtp_pass' => '', // your gmail password
-      'smtp_port' => 465,
-      'mailtype'  => 'html',
-      'charset'   => 'utf-8',
-      'newline'   => "\r\n"
-    ];
+    $this->load->library('Phpmailer_lib');
 
-    $this->load->library('email', $config);
-    $this->email->initialize($config);
+    $mail = $this->phpmailer_lib->load();
 
-    $this->email->from('', ''); // email address to send the email from & the alias
-    $this->email->to($this->input->post('email'));
+    $mail->isSMTP();
+    $mail->Host = 'ssl://smtp.googlemail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'thebabelian@gmail.com'; // your gmail address
+    $mail->Password = '2a70f021f09c50be74caf805d7928249f7af0060'; // your gmail password
+    $mail->SMTPSecure = 'ssl';
+    $mail->Port = 465;
+
+    $mail->setFrom('account@thebabelianchannel.site', 'TBC App Account'); // your email address to send the email from
+
+    $mail->addAddress($this->input->post('email'));
+
+    $mail->isHTML(true);
 
     if ($type == 'verify') {
-      $this->email->subject('Account Verification');
-      $this->email->message('Welcome to thebabelianchannel.site! Please verify your account by clicking the link below. <a href="' . base_url() . 'auth/verify?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Activate</a>');
+      $mail->Subject = 'Account Verification';
+      $mail->Body = 'Welcome to thebabelianchannel.site! Please verify your account by clicking the link below. <a href="' . base_url() . 'auth/verify?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Activate</a>';
     } else if ($type == 'forgot') {
-      $this->email->subject('Reset Password');
-      $this->email->message('Looks like you\'ve forgotten your password. Don\'t worry, you can reset your password by clicking the link below. <a href="' . base_url() . 'auth/resetpassword?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Reset Password</a>');
+      $mail->Subject = 'Reset Password';
+      $mail->Body = 'Looks like you\'ve forgotten your password. Don\'t worry, you can reset your password by clicking the link below. <a href="' . base_url() . 'auth/resetpassword?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Reset Password</a>';
     }
 
-    if ($this->email->send()) {
-      return true;
+    if (!$mail->send()) {
+      echo 'Message could not be sent.';
+      echo 'Mailer Error: ' . $mail->ErrorInfo;
     } else {
-      echo $this->email->print_debugger();
-      die;
+      return true;
     }
   }
 
