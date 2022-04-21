@@ -161,12 +161,12 @@ class Auth extends CI_Controller
     $mail->isSMTP();
     $mail->Host = 'ssl://smtp.googlemail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'thebabelian@gmail.com'; // your gmail address
-    $mail->Password = '2a70f021f09c50be74caf805d7928249f7af0060'; // your gmail password
+    $mail->Username = ''; // your gmail address
+    $mail->Password = ''; // your gmail password
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
 
-    $mail->setFrom('account@thebabelianchannel.site', 'TBC App Account'); // your email address to send the email from
+    $mail->setFrom('', ''); // your email address to send the email from
 
     $mail->addAddress($this->input->post('email'));
 
@@ -174,7 +174,7 @@ class Auth extends CI_Controller
 
     if ($type == 'verify') {
       $mail->Subject = 'Account Verification';
-      $mail->Body = 'Welcome to thebabelianchannel.site! Please verify your account by clicking the link below. <a href="' . base_url() . 'auth/verify?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Activate</a>';
+      $mail->Body = 'Please verify your account by clicking the link below. <a href="' . base_url() . 'auth/verify?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Activate</a>';
     } else if ($type == 'forgot') {
       $mail->Subject = 'Reset Password';
       $mail->Body = 'Looks like you\'ve forgotten your password. Don\'t worry, you can reset your password by clicking the link below. <a href="' . base_url() . 'auth/resetpassword?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Reset Password</a>';
