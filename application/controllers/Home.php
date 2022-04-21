@@ -73,14 +73,14 @@ class Home extends CI_Controller
     $mail->isSMTP();
     $mail->Host = 'ssl://smtp.googlemail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'thebabelian@gmail.com'; // your gmail address
-    $mail->Password = '2a70f021f09c50be74caf805d7928249f7af0060'; // your gmail password
+    $mail->Username = ''; // your gmail address
+    $mail->Password = ''; // your gmail password
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
 
-    $mail->setFrom('account@thebabelianchannel.site', 'TBC App Account'); // your email address to send the email from
+    $mail->setFrom('', ''); // your email address to send the email from
 
-    $mail->addAddress('inquiry@thebabelianchannel.site');
+    $mail->addAddress(''); // email address to receive the inquiry email
     $mail->isHTML(true);
     $mail->Subject = $this->input->post('email') . ' | Inquiry';
     $mail->Body = 'Name: ' . $this->input->post('name') . '<br>Message: ' . $this->input->post('message');
